@@ -2,7 +2,11 @@ package com;
 
 import com.data.Item;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public abstract class KafkaShop {
@@ -30,5 +34,12 @@ public abstract class KafkaShop {
     public static Item deserializeItemFromJSON(String json){
         Gson gson = new Gson();
         return gson.fromJson(json, Item.class);
+    }
+
+    public static List<Item> deserializeItemsFromJSON(String json){
+        Gson gson = new Gson();
+
+        Type listType = new TypeToken<List<Item>>(){}.getType();
+        return gson.fromJson(json,listType);
     }
 }
