@@ -15,10 +15,10 @@ public class APIClient {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("******** Welcome to Kafka Shop System Administrator ********");
-        int minutes;
-        String itemName;
         String input = "";
+
+        System.out.println("******** Welcome to Kafka Shop System Administrator ********");
+
         try {
             while (!input.equalsIgnoreCase("0")) {
                 System.out.println("Administrator Queries:");
@@ -30,7 +30,9 @@ public class APIClient {
                 System.out.println("6 - Item providing the highest profit over the last 5 minutes");
                 System.out.println("7 - Query over a range of products for average sales price");
                 System.out.println("0 - Exit");
+
                 input = read();
+
                 switch (input) {
                     case "1":
                         totalSoldItems();
@@ -58,6 +60,7 @@ public class APIClient {
             }
         } catch (Exception e) {
             e.printStackTrace();
+
             System.out.println("Some error occurred. The server is not online or the request received timeout.");
             System.out.println("******** Administrator closed ********");
         }
@@ -76,11 +79,11 @@ public class APIClient {
         return response.readEntity(String.class);
     }
 
-    private static void print(String key, int value, String string){
+    private static void print(String key, int value, String string) {
         System.out.println(key + ": " + value + " " + string);
     }
 
-    private static void print(String key, int value){
+    private static void print(String key, int value) {
         System.out.println(key + ": " + value);
     }
 
@@ -91,22 +94,30 @@ public class APIClient {
 
     private static void soldUnitsOfEachItemLast5Minutes() {
         String jsonString = request("/units-sold-each-item");
-        List<Item> products = KafkaShop.deserializeItemsFromJSON(jsonString);
-        System.out.println("**** Response ****");
-        for(Item product : products){
-            print(product.getName(),product.getAmount(),"purchases");
+        try {
+            List<Item> products = KafkaShop.deserializeItemsFromJSON(jsonString);
+            System.out.println("**** Response ****");
+            for (Item product : products) {
+                print(product.getName(), product.getAmount(), "purchases");
+            }
+            System.out.println("******************");
+        } catch (Exception e) {
+            System.out.println("Response: " + jsonString);
         }
-        System.out.println("******************");
     }
 
     private static void maximumPriceOfEachItemSold() {
         String jsonString = request("/maximum-price-of-each-item-sold");
-        List<Item> products = KafkaShop.deserializeItemsFromJSON(jsonString);
-        System.out.println("**** Response ****");
-        for(Item product : products){
-            print(product.getName(),product.getPrice() * product.getAmount(),"maximum price");
+        try {
+            List<Item> products = KafkaShop.deserializeItemsFromJSON(jsonString);
+            System.out.println("**** Response ****");
+            for (Item product : products) {
+                print(product.getName(), product.getPrice() * product.getAmount(), "maximum price");
+            }
+            System.out.println("******************");
+        } catch (Exception e) {
+            System.out.println("Response: " + jsonString);
         }
-        System.out.println("******************");
     }
 
     private static void averageNumberShipmentsOfEachItemSold() {
@@ -116,16 +127,16 @@ public class APIClient {
 
     private static void shopRevenueExpensesProfit() {
         String jsonString = request("/shop-status");
-        System.out.println("Response" + jsonString);
+        System.out.println("Response: " + jsonString);
     }
 
     private static void itemHighestProfit() {
         String jsonString = request("/highest-profit-item");
-        System.out.println("Response" + jsonString);
+        System.out.println("Response: " + jsonString);
     }
 
     private static void itemsAverageSoldPrice() {
         String jsonString = request("/item-average-sold-price");
-        System.out.println("Response" + jsonString);
+        System.out.println("Response: " + jsonString);
     }
 }
